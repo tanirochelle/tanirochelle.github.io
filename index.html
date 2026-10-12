@@ -197,16 +197,16 @@ h3 {
 /* ---------- Timeline drawn on a scale bar ---------- */
 .timeline-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; max-width: 40em; }
 .timeline-head p { color: var(--ink-soft); }
-.tracks { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); row-gap: 6px; }
+.tracks { display: grid; grid-template-columns: repeat(var(--n, 10), minmax(0, 1fr)); row-gap: 6px; }
 .track-label { grid-column: 1 / -1; font-size: 15.5px; line-height: 1.4; margin-top: 10px; }
 .track-label b { font-family: var(--display); font-stretch: 108%; font-weight: 700; }
 .track-label span { color: var(--ink-soft); }
 .track-bar { height: 14px; border: 1px solid var(--ink); }
 .track-bar.open { clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%); border-right: 0; }
-.scalebar { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); margin-top: 22px; border: 1px solid var(--ink); height: 9px; }
+.scalebar { display: grid; grid-template-columns: repeat(var(--n, 10), minmax(0, 1fr)); margin-top: 22px; border: 1px solid var(--ink); height: 9px; }
 .scalebar i:nth-child(odd) { background: var(--ink); }
-.months { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); margin-top: 6px; }
-.months span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.months { display: grid; grid-template-columns: repeat(var(--n, 10), minmax(0, 1fr)); margin-top: 6px; }
+.months span { white-space: nowrap; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
 .scale-note { margin-top: 10px; }
 
 /* ---------- Project plates ---------- */
@@ -426,20 +426,20 @@ dialog::backdrop { background: var(--scrim); }
   <section class="band" id="timeline">
     <div class="wrap">
       <div class="timeline-head">
-        <h2>Ten months of GIS</h2>
+        <h2 id="gis-months">Ten months of GIS</h2>
         <p>My GIS work began in January 2026, building on a spatial analysis background from Navy sonar. Each bar below is one body of work, drawn against a scale bar in months.</p>
       </div>
       <div class="tracks" role="img" aria-label="Timeline, January to October 2026. Introduction to Geospatial Science course: January to May. PM2.5 model research: May to present. San Diego flooding analysis for NR 450: August to present.">
         <p class="track-label"><b>NR 319 Introduction to Geospatial Science</b> <span>&middot; January to May &middot; final project on nuclear siting in Utah</span></p>
-        <div class="track-bar c-utah" style="grid-column: 1 / 6"></div>
+        <div class="track-bar c-utah" data-start="2026-01" data-end="2026-05" style="grid-column: 1 / 6"></div>
         <p class="track-label"><b>PM2.5 prediction model research</b> <span>&middot; May to present &middot; Department of Statistics</span></p>
-        <div class="track-bar c-pm open" style="grid-column: 5 / 11"></div>
+        <div class="track-bar c-pm open" data-start="2026-05" style="grid-column: 5 / 11"></div>
         <p class="track-label"><b>San Diego flooding analysis</b> <span>&middot; August to present &middot; NR 450 Geospatial Project Design and Analysis</span></p>
-        <div class="track-bar c-sd open" style="grid-column: 8 / 11"></div>
+        <div class="track-bar c-sd open" data-start="2026-08" style="grid-column: 8 / 11"></div>
       </div>
       <div class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="months" aria-hidden="true"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div>
-      <p class="mono scale-note">Scale: 1 division = 1 month, 2026</p>
+      <p class="mono scale-note">Scale: 1 division = 1 month, from January 2026</p>
     </div>
   </section>
 
@@ -449,7 +449,7 @@ dialog::backdrop { background: var(--scrim); }
       <header class="plate-head">
         <p class="mono"><span class="swatch c-sd"></span>August 2026 to present &middot; NR 450 course project &middot; Ongoing</p>
         <h2>Atmospheric flooding analysis of San Diego</h2>
-        <p class="deck">San Diego experienced heavy atmospheric flooding 2024. My partner and I are testing how well terrain explains where the water went, and what the city could do next for future events.</p>
+        <p class="deck">San Diego experienced heavy atmospheric flooding in 2024. My partner and I are testing how well terrain explains where the water went, and what the city could do next for future events.</p>
       </header>
 
       <div class="plate-body">
@@ -774,6 +774,58 @@ dialog::backdrop { background: var(--scrim); }
     if (e.key === 'ArrowLeft') { step(-1); }
     if (e.key === 'ArrowRight') { step(1); }
   });
+})();
+</script>
+<script>
+/* Timeline that extends itself: one column per month from January 2026 to the current month.
+   To end a bar, add data-end="YYYY-MM" to it (for example data-end="2026-12"). */
+(function () {
+  var section = document.getElementById('timeline');
+  if (!section) { return; }
+  var START_YEAR = 2026, START_MONTH = 0;
+  var now = new Date();
+  var n = (now.getFullYear() - START_YEAR) * 12 + (now.getMonth() - START_MONTH) + 1;
+  if (!(n >= 10)) { n = 10; }
+  function index(ym) {
+    var p = ym.split('-');
+    return (parseInt(p[0], 10) - START_YEAR) * 12 + (parseInt(p[1], 10) - 1 - START_MONTH);
+  }
+  section.style.setProperty('--n', n);
+
+  var bars = section.querySelectorAll('.track-bar[data-start]');
+  Array.prototype.forEach.call(bars, function (bar) {
+    var from = index(bar.getAttribute('data-start')) + 1;
+    var endAttr = bar.getAttribute('data-end');
+    var to = endAttr ? index(endAttr) + 2 : n + 1;
+    if (to > n + 1) { to = n + 1; }
+    bar.style.gridColumn = from + ' / ' + to;
+  });
+
+  var scale = section.querySelector('.scalebar');
+  var months = section.querySelector('.months');
+  var short = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var full = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var step = n <= 12 ? 1 : (n <= 24 ? 3 : (n <= 48 ? 6 : 12));
+  var ticks = '', labels = '';
+  for (var i = 0; i < n; i++) {
+    var m = (START_MONTH + i) % 12;
+    var y = START_YEAR + Math.floor((START_MONTH + i) / 12);
+    ticks += '<i></i>';
+    labels += '<span>' + (i % step === 0 ? (m === 0 && i > 0 ? y : short[m]) : '') + '</span>';
+  }
+  scale.innerHTML = ticks;
+  months.innerHTML = labels;
+
+  var words = ['Ten', 'Eleven', 'Twelve'];
+  var heading = document.getElementById('gis-months');
+  if (heading) { heading.textContent = (n <= 12 ? words[n - 10] : n) + ' months of GIS'; }
+
+  var lastM = (START_MONTH + n - 1) % 12;
+  var lastY = START_YEAR + Math.floor((START_MONTH + n - 1) / 12);
+  var tracks = section.querySelector('.tracks');
+  if (tracks) {
+    tracks.setAttribute('aria-label', tracks.getAttribute('aria-label').replace('January to October 2026', 'January 2026 to ' + full[lastM] + ' ' + lastY));
+  }
 })();
 </script>
 </body>
