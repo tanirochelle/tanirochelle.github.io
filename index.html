@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="GIS and spatial data portfolio of Tani Lambert: San Diego flooding analysis, PM2.5 model comparison, and nuclear siting in Utah.">
+<title>Tani Lambert Mapping Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap">
+<style>
+:root { color-scheme: light; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<style>
+/* Layout: a chart sheet. One 1120px column on chart-paper blue-white; every project is a plate
+   with a double-neatline lead map, narrative on the left and mono map-notes on the right;
+   a scale bar in months carries the chronology. */
+:root {
+  --paper: #F1F5F6;      /* chart paper */
+  --panel: #E1ECF0;      /* shallow-water tint */
+  --ink: #12233A;        /* navy ink */
+  --ink-soft: #4B5D72;
+  --rule: #B7C7D1;
+  --magenta: #A1246A;    /* chart magenta: annotations, PM2.5 project */
+  --ochre: #8F6610;      /* land buff: Utah project */
+  --water: #1F6E97;      /* San Diego project */
+  --sheet: #FFFFFF;      /* the paper a map is printed on */
+  --sheet-edge: #12233A;
+  --scrim: rgba(8, 16, 26, 0.9);
+  --scrim-ink: #EAF0F5;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C1724; --panel: #142538; --ink: #E7EEF4; --ink-soft: #A3B4C6; --rule: #2A4058;
+    --magenta: #EC8DBF; --ochre: #DDB75C; --water: #72BCE0;
+    --sheet: #F4F6F7; --sheet-edge: #6B839B;
+    --scrim: rgba(4, 9, 15, 0.92); --scrim-ink: #EAF0F5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C1724; --panel: #142538; --ink: #E7EEF4; --ink-soft: #A3B4C6; --rule: #2A4058;
+  --magenta: #EC8DBF; --ochre: #DDB75C; --water: #72BCE0;
+  --sheet: #F4F6F7; --sheet-edge: #6B839B;
+  --scrim: rgba(4, 9, 15, 0.92); --scrim-ink: #EAF0F5;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+p, h1, h2, h3, ul, ol, dl, dd, figure, table { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+a { color: inherit; }
+img { display: block; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
+
+.wrap { max-width: 1120px; margin-inline: auto; padding-inline: 20px; }
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.bar .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  flex-wrap: wrap;
+  padding-block: 12px;
+}
+.bar-name {
+  font-family: var(--display);
+  font-stretch: 112%;
+  font-weight: 750;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+.bar nav { display: flex; gap: 4px 20px; flex-wrap: wrap; }
+.bar nav a {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding-block: 4px;
+  border-bottom: 1px solid transparent;
+}
+.bar nav a:hover { color: var(--ink); border-bottom-color: var(--magenta); }
+
+/* ---------- Hero ---------- */
+.hero { padding-block: 56px 48px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  gap: 48px 64px;
+  align-items: start;
+}
+.hero-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+h1 {
+  font-family: var(--display);
+  font-stretch: 116%;
+  font-weight: 780;
+  font-size: clamp(2.5rem, 7vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.lede {
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  line-height: 1.42;
+  max-width: 30em;
+  text-wrap: pretty;
+}
+.about { display: flex; flex-direction: column; gap: 14px; max-width: 38em; color: var(--ink); }
+.neatline {
+  background: var(--sheet);
+  border: 1px solid var(--sheet-edge);
+  outline: 3px solid var(--sheet-edge);
+  outline-offset: 5px;
+  margin: 8px;
+}
+.portrait img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.portrait-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.portrait-col .mono { padding-inline: 8px; }
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 32px;
+  border-top: 2px solid var(--ink);
+  margin-top: 44px;
+}
+.tools > div { padding-block: 14px 12px; min-width: 0; }
+.tools > div:nth-child(n + 4) { border-top: 1px solid var(--rule); }
+.tools dt {
+  font-family: var(--display);
+  font-stretch: 108%;
+  font-weight: 700;
+  font-size: 17px;
+}
+.tools dd { font-size: 15.5px; line-height: 1.5; color: var(--ink-soft); }
+
+/* ---------- Section scaffolding ---------- */
+section { scroll-margin-top: 72px; }
+.band { border-top: 1px solid var(--rule); padding-block: 52px; }
+h2 {
+  font-family: var(--display);
+  font-stretch: 112%;
+  font-weight: 750;
+  font-size: clamp(1.65rem, 3.6vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-stretch: 108%;
+  font-weight: 700;
+  font-size: 1.12rem;
+  line-height: 1.25;
+}
+.swatch { display: inline-block; width: 22px; height: 11px; border: 1px solid var(--ink); vertical-align: -1px; margin-right: 8px; }
+.c-utah { background: var(--ochre); }
+.c-pm { background: var(--magenta); }
+.c-sd { background: var(--water); }
+
+/* ---------- Timeline drawn on a scale bar ---------- */
+.timeline-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; max-width: 40em; }
+.timeline-head p { color: var(--ink-soft); }
+.tracks { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); row-gap: 6px; }
+.track-label { grid-column: 1 / -1; font-size: 15.5px; line-height: 1.4; margin-top: 10px; }
+.track-label b { font-family: var(--display); font-stretch: 108%; font-weight: 700; }
+.track-label span { color: var(--ink-soft); }
+.track-bar { height: 14px; border: 1px solid var(--ink); }
+.track-bar.open { clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%); border-right: 0; }
+.scalebar { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); margin-top: 22px; border: 1px solid var(--ink); height: 9px; }
+.scalebar i:nth-child(odd) { background: var(--ink); }
+.months { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); margin-top: 6px; }
+.months span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.scale-note { margin-top: 10px; }
+
+/* ---------- Project plates ---------- */
+.plate-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+.deck { font-size: clamp(1.1rem, 1.9vw, 1.28rem); line-height: 1.45; max-width: 36em; font-style: italic; color: var(--ink); text-wrap: pretty; }
+.plate-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+  gap: 36px 64px;
+  align-items: start;
+}
+.prose { display: flex; flex-direction: column; gap: 16px; max-width: 39em; min-width: 0; }
+.prose ul { display: flex; flex-direction: column; gap: 6px; }
+.prose li { padding-left: 20px; position: relative; }
+.prose li::before { content: ""; position: absolute; left: 2px; top: 0.72em; width: 8px; height: 1px; background: var(--ink); }
+.notes { border-top: 2px solid var(--ink); min-width: 0; }
+.notes > div { padding-block: 10px; border-bottom: 1px solid var(--rule); }
+.notes dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.notes dd { font-family: var(--mono); font-size: 13px; line-height: 1.55; }
+
+.notes .defs { display: flex; flex-direction: column; gap: 6px; }
+.notes .defs b { font-weight: 500; color: var(--ink); display: block; }
+.notes .defs li { color: var(--ink-soft); }
+.sel { user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+.hero-contact { display: flex; flex-wrap: wrap; gap: 6px 22px; font-family: var(--mono); font-size: 13.5px; }
+.hero-contact a, .contact-list a { text-decoration-color: var(--magenta); text-underline-offset: 3px; }
+.contact-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; border-top: 2px solid var(--ink); margin-top: 22px; max-width: 820px; }
+.contact-list > div { padding-block: 14px; min-width: 0; }
+.contact-list dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.contact-list dd { font-family: var(--mono); font-size: 15px; line-height: 1.6; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; overflow-wrap: anywhere; }
+.copy { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 4px 10px; cursor: pointer; }
+.copy:hover { background: var(--ink); color: var(--paper); }
+
+.figs { margin-top: 44px; display: flex; flex-direction: column; gap: 36px; }
+.shot {
+  display: block;
+  width: 100%;
+  padding: 0;
+  cursor: zoom-in;
+  text-align: left;
+  background: none;
+  border: 0;
+}
+.shot img { width: 100%; height: auto; }
+figcaption, .cap {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-top: 10px;
+}
+.lead-cap { padding-inline: 8px; margin-top: 16px; }
+
+.thumbs { display: grid; gap: 22px 18px; }
+.thumbs-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.thumbs-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.thumb .frame {
+  display: block;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  transition: border-color 0.15s;
+}
+.thumb:hover .frame { border-color: var(--ink); }
+.thumbs-6 .frame img { aspect-ratio: 1275 / 1650; object-fit: cover; }
+.thumbs-4 .frame img { aspect-ratio: 4 / 3; object-fit: contain; }
+.thumb .cap { display: block; margin-top: 8px; }
+
+/* Utah: lead map beside criteria and model */
+.utah-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 36px 56px; align-items: start; }
+.utah-side { display: flex; flex-direction: column; gap: 34px; min-width: 0; }
+.block { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.scroll-x { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; line-height: 1.4; }
+th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--ink-soft); text-align: left; }
+th, td { padding: 9px 16px 9px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { border-bottom: 2px solid var(--ink); }
+td.num { font-family: var(--mono); font-size: 13.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.models { display: flex; gap: 14px; align-items: flex-start; }
+.models .thumb:nth-child(1) { flex: 0.489 1 0; min-width: 0; }
+.models .thumb:nth-child(2) { flex: 1.353 1 0; min-width: 0; }
+.models .frame img { aspect-ratio: auto; }
+
+/* PM2.5 lead */
+.pm-lead { max-width: 860px; }
+
+/* San Diego: two sheets side by side */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 48px; max-width: 920px; }
+
+/* Workflow steps (a real sequence, numbered in the source document) */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; counter-reset: step; }
+.steps li { counter-increment: step; border-top: 1px solid var(--rule); padding-block: 14px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.steps li::before {
+  content: "Step " counter(step);
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--water);
+}
+.steps p { font-size: 15.5px; line-height: 1.5; color: var(--ink-soft); }
+.progress { background: var(--panel); padding: 18px 22px; max-width: 46em; }
+.progress p + p { margin-top: 6px; }
+
+footer { border-top: 2px solid var(--ink); margin-top: 8px; }
+footer .wrap { display: flex; justify-content: space-between; gap: 6px 24px; flex-wrap: wrap; padding-block: 22px 40px; }
+
+/* ---------- Viewer ---------- */
+dialog {
+  border: 0; padding: 0; margin: 0;
+  width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+  background: transparent; color: var(--scrim-ink);
+}
+dialog::backdrop { background: var(--scrim); }
+.viewer { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; padding: 14px 16px 18px; }
+.viewer-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.viewer-top .mono, .viewer-cap { color: var(--scrim-ink); }
+.viewer-stage { min-height: 0; display: flex; align-items: center; justify-content: center; }
+.viewer-stage img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; background: var(--sheet); }
+.viewer-cap { font-family: var(--mono); font-size: 13px; line-height: 1.5; text-align: center; max-width: 60em; margin-inline: auto; }
+.viewer-btns { display: flex; gap: 8px; }
+.vbtn {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  background: transparent; color: var(--scrim-ink);
+  border: 1px solid var(--scrim-ink); padding: 7px 12px; cursor: pointer;
+}
+.vbtn:hover { background: var(--scrim-ink); color: #0C1724; }
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 900px) {
+  .thumbs-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plate-body { grid-template-columns: minmax(0, 1fr); }
+  .utah-top { grid-template-columns: minmax(0, 1fr); }
+  .utah-top .lead { max-width: 460px; }
+}
+@media (max-width: 720px) {
+  body { font-size: 16.5px; }
+  .wrap { padding-inline: 18px; }
+  .hero { padding-block: 36px 36px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .portrait-col { max-width: 260px; order: -1; }
+  .tools { grid-template-columns: minmax(0, 1fr); }
+  .contact-list { grid-template-columns: minmax(0, 1fr); }
+  .contact-list > div + div { border-top: 1px solid var(--rule); }
+  .tools > div + div { border-top: 1px solid var(--rule); }
+  .band { padding-block: 40px; }
+  .thumbs-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .thumbs-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pair { grid-template-columns: minmax(0, 1fr); max-width: 460px; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .bar nav { gap: 2px 16px; }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="bar-name" href="#top">Tani Lambert</a>
+    <nav aria-label="Sections">
+      <a href="#timeline">Timeline</a>
+      <a href="#san-diego">San Diego flooding</a>
+      <a href="#pm25">PM2.5 models</a>
+      <a href="#utah">Nuclear siting</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <p class="mono">Mapping portfolio &middot; Spatial data analytics</p>
+          <h1>Tani Lambert</h1>
+          <p class="lede">I map environmental data: where a city floods, where air quality models disagree, and where a reactor could be sited.</p>
+          <div class="about">
+            <p>I am a Navy veteran and a student at Colorado State University, majoring in both Statistics and Environmental and Natural Resource Economics, with a minor in Applied Data Science.</p>
+            <p>My spatial analysis experience is older than my mapping. As a Sonar Technician in the Navy, I used acoustic analytics to locate underwater objects by sound, so I was thinking in bearing, range and position long before I opened GIS software. Over nine years of active duty I supervised watch teams in acoustic analysis, then taught sonar operations as a Master Training Specialist.</p>
+            <p>I took my first GIS course in January 2026. By May I had been selected for an internship with the Department of Statistics, mapping exposome data models. That work led me to trade an elective for NR 450 Geospatial Project Design and Analysis, where a partner and I are analyzing atmospheric flooding in San Diego. Although my time in GIS has been short, I have grown quickly in it.</p>
+          </div>
+          <p class="hero-contact"><span class="sel">tani.lambert@colostate.edu</span><a href="https://www.linkedin.com/in/tani-lambert-981466387/" target="_blank" rel="noopener">LinkedIn</a></p>
+        </div>
+        <div class="portrait-col">
+          <div class="neatline portrait">
+            <img src="img/headshot.jpg" alt="Portrait of Tani Lambert" width="800" height="1000">
+          </div>
+          <p class="mono">Colorado State University, expected May 2028<br>B.S. Statistics &middot; B.S. Environmental and Natural Resource Economics<br>Minor in Applied Data Science<br>U.S. Navy veteran &middot; Sonar Technician</p>
+        </div>
+      </div>
+
+      <dl class="tools">
+        <div>
+          <dt>ArcGIS Pro</dt>
+          <dd>Suitability modeling in ModelBuilder, terrain analysis, map layouts and 3D scenes.</dd>
+        </div>
+        <div>
+          <dt>R</dt>
+          <dd>Aligning and comparing national raster datasets, statistical summaries and map figures.</dd>
+        </div>
+        <div>
+          <dt>Google Earth Engine</dt>
+          <dd>Pulling CHIRPS precipitation, Sentinel-1 SAR and JRC surface water data.</dd>
+        </div>
+        <div>
+          <dt>Spatial data preparation</dt>
+          <dd>Reprojecting, clipping and aligning raster and vector data from different sources and coordinate systems.</dd>
+        </div>
+        <div>
+          <dt>Documented workflows</dt>
+          <dd>ModelBuilder flowcharts, data source tables and written step-by-step methods, so the work can be rerun or handed off.</dd>
+        </div>
+        <div>
+          <dt>Hazard and environmental analysis</dt>
+          <dd>Flood susceptibility, air quality and site suitability: analysis meant to inform decisions about risk.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="band" id="timeline">
+    <div class="wrap">
+      <div class="timeline-head">
+        <h2>Ten months of GIS</h2>
+        <p>My GIS work began in January 2026, building on a spatial analysis background from Navy sonar. Each bar below is one body of work, drawn against a scale bar in months.</p>
+      </div>
+      <div class="tracks" role="img" aria-label="Timeline, January to October 2026. Introduction to Geospatial Science course: January to May. PM2.5 model research: May to present. San Diego flooding analysis for NR 450: August to present.">
+        <p class="track-label"><b>NR 319 Introduction to Geospatial Science</b> <span>&middot; January to May &middot; final project on nuclear siting in Utah</span></p>
+        <div class="track-bar c-utah" style="grid-column: 1 / 6"></div>
+        <p class="track-label"><b>PM2.5 prediction model research</b> <span>&middot; May to present &middot; Department of Statistics</span></p>
+        <div class="track-bar c-pm open" style="grid-column: 5 / 11"></div>
+        <p class="track-label"><b>San Diego flooding analysis</b> <span>&middot; August to present &middot; NR 450 Geospatial Project Design and Analysis</span></p>
+        <div class="track-bar c-sd open" style="grid-column: 8 / 11"></div>
+      </div>
+      <div class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="months" aria-hidden="true"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div>
+      <p class="mono scale-note">Scale: 1 division = 1 month, 2026</p>
+    </div>
+  </section>
+
+  <!-- ============ Project 3 ============ -->
+  <section class="band" id="san-diego">
+    <div class="wrap">
+      <header class="plate-head">
+        <p class="mono"><span class="swatch c-sd"></span>August 2026 to present &middot; NR 450 course project &middot; Ongoing</p>
+        <h2>Atmospheric flooding analysis of San Diego</h2>
+        <p class="deck">San Diego flooded on January 22, 2024. My partner and I are testing how well terrain explains where the water went, and what the city could do next.</p>
+      </header>
+
+      <div class="plate-body">
+        <div class="prose">
+          <p>My project partner and I used Google Earth Engine to pull CHIRPS precipitation, Sentinel-1 radar (SAR) imagery and JRC surface water data, and to analyze precipitation from the atmospheric floods of 2024. We are beginning the terrain analysis with a Topographic Wetness Index (TWI) and plan to add a Height Above Nearest Drainage (HAND) analysis, then compare both against the floods themselves.</p>
+          <p>The severity of the flooding was underreported, so we also compiled a heat map of Get It Done calls, the city&rsquo;s non-emergency reports, to show where residents were asking for help.</p>
+          <p>From there we will evaluate the mitigation and adaptation techniques used in Norfolk, Virginia, as a case study for what can be proposed in San Diego to prevent flooding that exceeds sea level rise.</p>
+        </div>
+        <dl class="notes">
+          <div><dt>Context</dt><dd>NR 450 Geospatial Project Design and Analysis, Colorado State University. Students work in pairs on a project of their choice: planning, acquiring and preparing data, spatial analysis and visual outputs.</dd></div>
+          <div><dt>Tools</dt><dd>ArcGIS Pro, Google Earth Engine, R</dd></div>
+          <div><dt>Data</dt><dd><ul class="defs"><li><b>CHIRPS</b> Climate Hazards Center InfraRed Precipitation with Station data</li><li><b>Sentinel-1 SAR</b> Synthetic Aperture Radar imagery</li><li><b>JRC</b> Joint Research Centre Global Surface Water</li><li><b>NOAA</b> precipitation totals</li><li><b>Get It Done</b> City of San Diego non-emergency reports</li></ul></dd></div>
+          <div><dt>Methods</dt><dd>TWI, HAND (planned), heat map</dd></div>
+        </dl>
+      </div>
+
+      <div class="figs">
+        <div class="pair">
+          <figure>
+            <button class="shot" type="button" data-group="San Diego" data-full="img/sd-twi.jpg" data-caption="Topographic Wetness Index, San Diego, California. Low values mark steep terrain; high values mark floodplains.">
+              <span class="neatline" style="display:block"><img src="img/t-sd-twi.jpg" alt="Topographic Wetness Index map of San Diego, from low values on steep terrain to high values on floodplains" width="560" height="725" loading="lazy"></span>
+            </button>
+            <figcaption class="lead-cap">Topographic Wetness Index. Low values mark steep terrain; high values mark floodplains.</figcaption>
+          </figure>
+          <figure>
+            <button class="shot" type="button" data-group="San Diego" data-full="img/sd-getitdone.jpg" data-caption="January 22, 2024: NOAA precipitation totals, Get It Done flooding and drainage calls, and flood inundation areas.">
+              <span class="neatline" style="display:block"><img src="img/t-sd-getitdone.jpg" alt="Map of San Diego with a heat map of Get It Done flooding and drainage calls, precipitation totals as graduated circles, and flood inundation areas" width="560" height="725" loading="lazy"></span>
+            </button>
+            <figcaption class="lead-cap">January 22, 2024. Get It Done flooding and drainage calls against NOAA precipitation totals and flood inundation areas.</figcaption>
+          </figure>
+        </div>
+
+        <div class="progress">
+          <p class="mono">Progress, October 2026</p>
+          <p>Precipitation, SAR and surface water data are pulled, and the Get It Done heat map and first TWI map are drafted. The HAND analysis, the comparison against observed flooding and the Norfolk case study come next.</p>
+        </div>
+
+        <div class="block">
+          <h3>Project workflow</h3>
+          <ol class="steps">
+            <li><h3>Data acquisition</h3><p>Identify vector and raster sources, pull datasets through Google Earth Engine and collect Get It Done non-emergency calls.</p></li>
+            <li><h3>Verification and cleaning</h3><p>Reproject layers, check for missing data, reclassify rasters, clip to the city boundary and geocode the Get It Done data.</p></li>
+            <li><h3>Elevation and congestion maps</h3><p>Derive slope and aspect from digital elevation models, and map traffic congestion density around the entry and exit points of the main bases.</p></li>
+            <li><h3>Major flood event modeling</h3><p>Find the top precipitation events in CHIRPS, extract post-storm surface water from Sentinel-1 SAR, mask permanent water with the JRC baseline and compare against FEMA and First Street flood hazard layers.</p></li>
+            <li><h3>Hydrological modeling</h3><p>Run TWI and HAND from the elevation models, calculate flow accumulation, and validate modeled susceptibility against the SAR observations.</p></li>
+            <li><h3>Spatial analysis</h3><p>Overlay flood extent on roads and critical infrastructure, then measure flooded area, impacted road miles and affected population.</p></li>
+            <li><h3>Adaptation and mitigation strategies</h3><p>Assess sites by slope, soil permeability and land use, and prioritize where interventions would matter most.</p></li>
+            <li><h3>Interactive visualization</h3><p>Build web maps with layer toggles and legend controls, exported as standalone pages.</p></li>
+            <li><h3>Research paper</h3><p>Compile static maps, method figures and summary tables into a reproducible manuscript.</p></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============ Project 2 ============ -->
+  <section class="band" id="pm25">
+    <div class="wrap">
+      <header class="plate-head">
+        <p class="mono"><span class="swatch c-pm"></span>May 2026 to present &middot; Undergraduate research &middot; Ongoing</p>
+        <h2>Comprehensive review of PM2.5 prediction models</h2>
+        <p class="deck">Several research groups publish national maps of fine particulate pollution. I mapped where they disagree.</p>
+      </header>
+
+      <div class="plate-body">
+        <div class="prose">
+          <p>PM2.5 is fine inhalable particulate matter, 2.5 micrometers and smaller, and it poses a risk for a wide range of health issues. Health and policy research depends on models that predict its concentration everywhere, including the places between ground monitors.</p>
+          <p>Working with Associate Professor Kayleigh Keller, I compared the available datasets: ACAG, GHAP and its U.S. counterpart USHAP, SEDAC, and CACES. They arrive as a mix of raster and vector data on different grids. I built a master grid, matched each model to its coordinate reference system and projection, and resampled with bilinear interpolation so the models could be differenced cell by cell. All of the work is in R.</p>
+          <h3>Key findings</h3>
+          <ul>
+            <li>No two independent datasets are aligned.</li>
+            <li>GHAP predicts significantly higher concentrations than the others.</li>
+            <li>ACAG&rsquo;s regional model is a crop of its global model, and the two are identical.</li>
+            <li>The western United States is the most uncertain region.</li>
+          </ul>
+          <h3>Where it is going</h3>
+          <p>This began as a paid summer position, and I was asked to continue with the professor into the fall. We have since evaluated the models against EPA sensors and extended the comparison to NO<sub>2</sub> and O<sub>3</sub>. I am now working toward a comprehensive review of all exposome models, with an urban and rural comparison.</p>
+        </div>
+        <dl class="notes">
+          <div><dt>Role</dt><dd>Undergraduate researcher, Department of Statistics, Colorado State University</dd></div>
+          <div><dt>Advisor</dt><dd>Kayleigh Keller, Associate Professor</dd></div>
+          <div><dt>Tools</dt><dd>R</dd></div>
+          <div><dt>Datasets</dt><dd><ul class="defs"><li><b>ACAG</b> Atmospheric Composition Analysis Group</li><li><b>GHAP</b> Global High-resolution and High-quality Air Pollutants</li><li><b>USHAP</b> U.S. High Air Pollutants, the regional GHAP product</li><li><b>SEDAC</b> NASA Socioeconomic Data and Applications Center</li><li><b>CACES</b> Center for Air, Climate and Energy Solutions</li></ul></dd></div>
+          <div><dt>Resolution</dt><dd>1 km grids (CACES varies)</dd></div>
+          <div><dt>Reference level</dt><dd>NAAQS annual PM2.5 limit: 9 &micro;g/m&sup3;</dd></div>
+        </dl>
+      </div>
+
+      <div class="figs">
+        <figure class="pm-lead">
+          <button class="shot" type="button" data-group="PM2.5" data-full="img/pm-disagreement.jpg" data-caption="Four-model disagreement for 2017, as the standard deviation across models in µg/m³. Darker reds mark higher disagreement.">
+            <span class="neatline" style="display:block"><img src="img/pm-disagreement.jpg" alt="Map of the contiguous United States showing the standard deviation among four PM2.5 models in 2017; disagreement is highest across the West" width="1296" height="776" loading="lazy"></span>
+          </button>
+          <figcaption class="lead-cap">Four-model disagreement for 2017, as the standard deviation across models. The darkest reds sit in the mountain West.</figcaption>
+        </figure>
+
+        <div class="block">
+          <h3>More from the analysis</h3>
+          <div class="thumbs thumbs-4">
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-differences.png" data-caption="Pairwise model differences for 2017. GHAP runs higher than every other model; the ACAG North America and global products are identical.">
+              <span class="frame"><img src="img/t-pm-differences.jpg" alt="Six maps of pairwise differences between PM2.5 models in 2017" width="560" height="400" loading="lazy"></span>
+              <span class="cap">Pairwise differences, 2017</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-grid-2017.png" data-caption="2017 grid discrepancy map, GHAP minus USHAP. Blue: higher GHAP predictions. Red: higher USHAP predictions.">
+              <span class="frame"><img src="img/t-pm-grid-2017.jpg" alt="2017 discrepancy map between GHAP and USHAP" width="560" height="400" loading="lazy"></span>
+              <span class="cap">GHAP minus USHAP, 2017</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-grid-2020.png" data-caption="2020 discrepancy map, GHAP minus USHAP. Blue: higher GHAP predictions. Red: higher USHAP predictions.">
+              <span class="frame"><img src="img/t-pm-grid-2020.jpg" alt="2020 discrepancy map between GHAP and USHAP" width="560" height="400" loading="lazy"></span>
+              <span class="cap">GHAP minus USHAP, 2020</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-temporal.png" data-caption="Cross-model spatial comparison of mean PM2.5 by state, January to April 2015: ACAG, SEDAC and USHAP.">
+              <span class="frame"><img src="img/t-pm-temporal.jpg" alt="Three state-level maps of mean PM2.5 from ACAG, SEDAC and USHAP for January to April 2015" width="560" height="204" loading="lazy"></span>
+              <span class="cap">State means by model, early 2015</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-levels-2017.png" data-caption="GHAP and USHAP PM2.5 levels, 2017.">
+              <span class="frame"><img src="img/t-pm-levels-2017.jpg" alt="GHAP and USHAP PM2.5 maps for 2017" width="560" height="194" loading="lazy"></span>
+              <span class="cap">GHAP and USHAP levels, 2017</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-levels-2020.png" data-caption="GHAP and USHAP PM2.5 levels, 2020.">
+              <span class="frame"><img src="img/t-pm-levels-2020.jpg" alt="GHAP and USHAP PM2.5 maps for 2020" width="560" height="215" loading="lazy"></span>
+              <span class="cap">GHAP and USHAP levels, 2020</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-trend-2015.png" data-caption="Monthly national average PM2.5 by model, 2015 to 2016: ACAG, SEDAC and USHAP.">
+              <span class="frame"><img src="img/t-pm-trend-2015.jpg" alt="Line chart of monthly national mean PM2.5 for ACAG, SEDAC and USHAP, 2015 to 2016" width="560" height="400" loading="lazy"></span>
+              <span class="cap">Monthly averages, 2015 to 2016</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="PM2.5" data-full="img/pm-trend-2018.png" data-caption="Monthly national average PM2.5 by model, 2018 to 2019: ACAG, GHAP and USHAP.">
+              <span class="frame"><img src="img/t-pm-trend-2018.jpg" alt="Line chart of monthly national mean PM2.5 for ACAG, GHAP and USHAP, 2018 to 2019" width="560" height="400" loading="lazy"></span>
+              <span class="cap">Monthly averages, 2018 to 2019</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Project 1 ============ -->
+  <section class="band" id="utah">
+    <div class="wrap">
+      <header class="plate-head">
+        <p class="mono"><span class="swatch c-utah"></span>May 2026 &middot; Course final project &middot; Complete</p>
+        <h2>Suitable nuclear power plant sites in Utah</h2>
+        <p class="deck">Where are the prime sites to build a nuclear power plant in Utah?</p>
+      </header>
+
+      <div class="plate-body">
+        <div class="prose">
+          <p>Energy demand is rising, pushed in part by AI data centers, and Utah has expressed interest in building a nuclear plant. For the final project of my first GIS course, I asked where in the state one could go.</p>
+          <p>I took five siting constraints from the federal Reactor Site Criteria (10 CFR Part 100) and turned each one into a map layer. I built the analysis in ArcGIS Pro ModelBuilder so that every step can be rerun: buffers around highways, railroads, fault lines and water, a union of the excluded areas, an erase against the state boundary, and a merge with the layers for suitable elevation and low population.</p>
+          <p>The result is a short list of candidate areas in south-central and southeastern Utah, delivered as a final site map and a 3D scene.</p>
+        </div>
+        <dl class="notes">
+          <div><dt>Context</dt><dd>NR 319 Introduction to Geospatial Science, Colorado State University</dd></div>
+          <div><dt>Tools</dt><dd>ArcGIS Pro: ModelBuilder, Buffer, Union, Erase, Reclassify, 3D scene</dd></div>
+          <div><dt>Data</dt><dd>USGS National Map (elevation, water, transportation), USGS Earthquake Hazards (faults), MRLC (land cover), 2020 Census tracts</dd></div>
+          <div><dt>Projection</dt><dd>NAD 1983 UTM Zone 12N</dd></div>
+        </dl>
+      </div>
+
+      <div class="figs">
+        <div class="utah-top">
+          <figure class="lead">
+            <button class="shot" type="button" data-group="Utah" data-full="img/utah-viable-sites.jpg" data-caption="Viable nuclear power plant locations in Utah. Green areas pass all five siting criteria.">
+              <span class="neatline" style="display:block"><img src="img/utah-viable-sites.jpg" alt="Map of Utah showing viable nuclear plant site areas in green, with freeways, lakes, rivers and streams" width="1275" height="1650" loading="lazy"></span>
+            </button>
+            <figcaption class="lead-cap">Final result. Green areas pass all five siting criteria.</figcaption>
+          </figure>
+
+          <div class="utah-side">
+            <div class="block">
+              <h3>Siting criteria</h3>
+              <div class="scroll-x">
+                <table>
+                  <thead><tr><th scope="col">Constraint</th><th scope="col">Why</th><th scope="col">Threshold</th></tr></thead>
+                  <tbody>
+                    <tr><td>Highways and railways</td><td>Must not interfere with plant operations</td><td class="num">&ge; 3 mi away</td></tr>
+                    <tr><td>Population centers</td><td>No dense area over 25,000 residents nearby</td><td class="num">&ge; 20 mi away</td></tr>
+                    <tr><td>Fault lines</td><td>Not on or near an earthquake fault</td><td class="num">&ge; 40 mi away</td></tr>
+                    <tr><td>Water source</td><td>Needs a stable water supply</td><td class="num">&le; 10 mi away</td></tr>
+                    <tr><td>Elevation</td><td>Avoids high-elevation plant redesign</td><td class="num">&lt; 2,000 m</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="cap">Adapted from 10 CFR Part 100, Reactor Site Criteria.</p>
+            </div>
+
+            <div class="block">
+              <h3>The model</h3>
+              <div class="models">
+                <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-model-prep.png" data-caption="ModelBuilder flowchart 1: clipping source data to the Utah boundary.">
+                  <span class="frame"><img src="img/utah-model-prep.png" alt="ModelBuilder flowchart clipping water, elevation, fault and land cover data to Utah" width="335" height="685" loading="lazy"></span>
+                </button>
+                <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-model-suitability.png" data-caption="ModelBuilder flowchart 2: buffers, union and erase to find suitable sites.">
+                  <span class="frame"><img src="img/utah-model-suitability.png" alt="ModelBuilder flowchart: buffers on freeways, fault lines, lakes, railroads and rivers feed a union and erase; elevation is reclassified and merged with population to produce suitable sites" width="905" height="669" loading="lazy"></span>
+                </button>
+              </div>
+              <p class="cap">ModelBuilder flowcharts. Left: clipping source data to the state. Right: the suitability model.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3>Supporting maps</h3>
+          <div class="thumbs thumbs-6">
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-landcover.jpg" data-caption="Utah land cover. Source: Multi-Resolution Land Characteristics Consortium.">
+              <span class="frame"><img src="img/t-utah-landcover.jpg" alt="Utah land cover map" width="560" height="725" loading="lazy"></span>
+              <span class="cap">Land cover</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-elevation.jpg" data-caption="Elevation map of Utah. Source: U.S. Geological Survey.">
+              <span class="frame"><img src="img/t-utah-elevation.jpg" alt="Elevation map of Utah" width="560" height="725" loading="lazy"></span>
+              <span class="cap">Elevation</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-elevation-suitability.jpg" data-caption="Elevation suitability: land below 2,000 meters is suitable.">
+              <span class="frame"><img src="img/t-utah-elevation-suitability.jpg" alt="Map of Utah elevation above and below 2,000 meters" width="560" height="725" loading="lazy"></span>
+              <span class="cap">Elevation suitability</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-landmarks.jpg" data-caption="Landmark features considered: freeways, railroads, fault lines, lakes, rivers and streams.">
+              <span class="frame"><img src="img/t-utah-landmarks.jpg" alt="Map of Utah freeways, railroads, fault lines, lakes and rivers" width="560" height="725" loading="lazy"></span>
+              <span class="cap">Landmark features</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-population.jpg" data-caption="Identifying low-population areas from 2020 total population.">
+              <span class="frame"><img src="img/t-utah-population.jpg" alt="Map of Utah showing areas above and below 25,000 residents" width="560" height="725" loading="lazy"></span>
+              <span class="cap">Low-population areas</span>
+            </button>
+            <button class="shot thumb" type="button" data-group="Utah" data-full="img/utah-3d.jpg" data-caption="3D map of viable nuclear power plant sites in Utah.">
+              <span class="frame"><img src="img/t-utah-3d.jpg" alt="3D scene of Utah with viable site areas" width="560" height="725" loading="lazy"></span>
+              <span class="cap">3D scene</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="contact">
+    <div class="wrap">
+      <h2>Contact</h2>
+      <dl class="contact-list">
+        <div>
+          <dt>Email</dt>
+          <dd><span class="sel" id="email-text">tani.lambert@colostate.edu</span><button class="copy" type="button" id="copy-email">Copy</button></dd>
+        </div>
+        <div>
+          <dt>LinkedIn</dt>
+          <dd><a href="https://www.linkedin.com/in/tani-lambert-981466387/" target="_blank" rel="noopener">linkedin.com/in/tani-lambert-981466387</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">Tani Lambert &middot; Colorado State University</p>
+    <p class="mono">Updated October 2026</p>
+  </div>
+</footer>
+
+<dialog id="viewer" aria-label="Map viewer">
+  <div class="viewer">
+    <div class="viewer-top">
+      <p class="mono" id="viewer-count"></p>
+      <div class="viewer-btns">
+        <button class="vbtn" type="button" id="viewer-prev">Previous</button>
+        <button class="vbtn" type="button" id="viewer-next">Next</button>
+        <button class="vbtn" type="button" id="viewer-close">Close</button>
+      </div>
+    </div>
+    <div class="viewer-stage"><img id="viewer-img" src="" alt=""></div>
+    <p class="viewer-cap" id="viewer-cap"></p>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  var shots = Array.prototype.slice.call(document.querySelectorAll('.shot[data-full]'));
+  var dlg = document.getElementById('viewer');
+  var img = document.getElementById('viewer-img');
+  var cap = document.getElementById('viewer-cap');
+  var count = document.getElementById('viewer-count');
+  var group = [], at = 0;
+
+  function render() {
+    var b = group[at];
+    var inner = b.querySelector('img');
+    img.src = b.getAttribute('data-full');
+    img.alt = inner ? inner.alt : '';
+    cap.textContent = b.getAttribute('data-caption') || '';
+    count.textContent = b.getAttribute('data-group') + ' · ' + (at + 1) + ' of ' + group.length;
+  }
+  function open(b) {
+    var g = b.getAttribute('data-group');
+    group = shots.filter(function (s) { return s.getAttribute('data-group') === g; });
+    at = group.indexOf(b);
+    render();
+    if (typeof dlg.showModal === 'function') { dlg.showModal(); } else { dlg.setAttribute('open', ''); }
+  }
+  function step(d) { at = (at + d + group.length) % group.length; render(); }
+
+  shots.forEach(function (b) { b.addEventListener('click', function () { open(b); }); });
+  document.getElementById('viewer-prev').addEventListener('click', function () { step(-1); });
+  document.getElementById('viewer-next').addEventListener('click', function () { step(1); });
+  document.getElementById('viewer-close').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (e) {
+    if (e.target === dlg || e.target.classList.contains('viewer-stage') || e.target.classList.contains('viewer')) { dlg.close(); }
+  });
+  var copyBtn = document.getElementById('copy-email');
+  var emailEl = document.getElementById('email-text');
+  function selectEmail() {
+    var r = document.createRange(); r.selectNodeContents(emailEl);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  }
+  copyBtn.addEventListener('click', function () {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(emailEl.textContent).then(function () {
+        copyBtn.textContent = 'Copied';
+        setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1600);
+      }).catch(selectEmail);
+    } else { selectEmail(); }
+  });
+  dlg.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') { step(-1); }
+    if (e.key === 'ArrowRight') { step(1); }
+  });
+})();
+</script>
+</body>
+</html>
