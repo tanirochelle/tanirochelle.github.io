@@ -240,6 +240,13 @@ h3 {
 .copy { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 4px 10px; cursor: pointer; }
 .copy:hover { background: var(--ink); color: var(--paper); }
 
+.results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; border-top: 2px solid var(--ink); max-width: 920px; }
+.results > div { padding-block: 14px 4px; min-width: 0; }
+.results dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.results dd { font-family: var(--display); font-stretch: 112%; font-weight: 750; font-size: 2.1rem; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--water); }
+.results dd span { font-size: 1rem; font-weight: 600; color: var(--ink-soft); }
+.results p { font-size: 15px; line-height: 1.45; color: var(--ink-soft); }
+.pub-links a, .steps a { font-family: var(--mono); font-size: 14px; text-decoration-color: var(--water); text-underline-offset: 3px; }
 .figs { margin-top: 44px; display: flex; flex-direction: column; gap: 36px; }
 .shot {
   display: block;
@@ -293,6 +300,7 @@ td.num { font-family: var(--mono); font-size: 13.5px; white-space: nowrap; font-
 .pm-lead { max-width: 860px; }
 
 /* San Diego: two sheets side by side */
+.pair.pair-wide { max-width: none; }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 48px; max-width: 920px; }
 
 /* Workflow steps (a real sequence, numbered in the source document) */
@@ -345,6 +353,8 @@ dialog::backdrop { background: var(--scrim); }
   .hero-grid { grid-template-columns: minmax(0, 1fr); }
   .portrait-col { max-width: 260px; order: -1; }
   .tools { grid-template-columns: minmax(0, 1fr); }
+  .results { grid-template-columns: minmax(0, 1fr); }
+  .results > div + div { border-top: 1px solid var(--rule); }
   .contact-list { grid-template-columns: minmax(0, 1fr); }
   .contact-list > div + div { border-top: 1px solid var(--rule); }
   .tools > div + div { border-top: 1px solid var(--rule); }
@@ -364,7 +374,7 @@ dialog::backdrop { background: var(--scrim); }
     <nav aria-label="Sections">
       <a href="#timeline">Timeline</a>
       <a href="#san-diego">San Diego flooding</a>
-      <a href="#pm25">PM2.5 models</a>
+      <a href="#pm25">Air quality models</a>
       <a href="#utah">Nuclear siting</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -382,7 +392,7 @@ dialog::backdrop { background: var(--scrim); }
           <div class="about">
             <p>I am a Navy veteran and a student at Colorado State University, majoring in both Statistics and Environmental and Natural Resource Economics, with a minor in Applied Data Science.</p>
             <p>My spatial analysis experience is older than my mapping. As a Sonar Technician in the Navy, I used acoustic analytics to locate underwater objects by sound, so I was thinking in bearing, range and position long before I opened GIS software. Over nine years of active duty I supervised watch teams in acoustic analysis, then taught sonar operations as a Master Training Specialist.</p>
-            <p>I took my first GIS course in January 2026. By May I had been selected for an internship with the Department of Statistics, mapping exposome data models. That work led me to trade an elective for NR 450 Geospatial Project Design and Analysis, where a partner and I are analyzing atmospheric flooding in San Diego. Although my time in GIS has been short, I have grown quickly in it.</p>
+            <p>I took my first GIS course in January 2026. By May I had been selected for an internship with the Department of Statistics, mapping exposome data models. That work led me to trade an elective for NR 450 Geospatial Project Design and Analysis, where a partner and I are modeling rainfall flooding in San Diego. Although my time in GIS has been short, I have grown quickly in it.</p>
           </div>
           <p class="hero-contact"><span class="sel">tani.lambert@colostate.edu</span><a href="https://www.linkedin.com/in/tani-lambert-981466387/" target="_blank" rel="noopener">LinkedIn</a></p>
         </div>
@@ -401,7 +411,7 @@ dialog::backdrop { background: var(--scrim); }
         </div>
         <div>
           <dt>R</dt>
-          <dd>Aligning and comparing national raster datasets, statistical summaries and map figures.</dd>
+          <dd>Aligning and comparing national raster datasets with terra, gstat and WhiteboxTools, statistical summaries and map figures.</dd>
         </div>
         <div>
           <dt>Google Earth Engine</dt>
@@ -413,11 +423,23 @@ dialog::backdrop { background: var(--scrim); }
         </div>
         <div>
           <dt>Documented workflows</dt>
-          <dd>ModelBuilder flowcharts, data source tables and written step-by-step methods, so the work can be rerun or handed off.</dd>
+          <dd>FGDC metadata, ModelBuilder flowcharts and written step-by-step methods, so the work can be rerun or handed off.</dd>
         </div>
         <div>
           <dt>Hazard and environmental analysis</dt>
           <dd>Flood susceptibility, air quality and site suitability: analysis meant to inform decisions about risk.</dd>
+        </div>
+        <div>
+          <dt>ArcGIS Online and StoryMaps</dt>
+          <dd>Publishing web maps and StoryMaps that explain results to a general audience.</dd>
+        </div>
+        <div>
+          <dt>Python and arcpy</dt>
+          <dd>Automating metadata for GIS layers.</dd>
+        </div>
+        <div>
+          <dt>Spatial statistics</dt>
+          <dd>Kriging, multi-criteria weighting with AHP, and ROC/AUC model validation.</dd>
         </div>
       </dl>
     </div>
@@ -429,12 +451,12 @@ dialog::backdrop { background: var(--scrim); }
         <h2 id="gis-months">Ten months of GIS</h2>
         <p>My GIS work began in January 2026, building on a spatial analysis background from Navy sonar. Each bar below is one body of work, drawn against a scale bar in months.</p>
       </div>
-      <div class="tracks" role="img" aria-label="Timeline, January to October 2026. Introduction to Geospatial Science course: January to May. PM2.5 model research: May to present. San Diego flooding analysis for NR 450: August to present.">
+      <div class="tracks" role="img" aria-label="Timeline, January to October 2026. Introduction to Geospatial Science course: January to May. Air pollution model research: May to present. San Diego flooding analysis for NR 450: August to present.">
         <p class="track-label"><b>NR 319 Introduction to Geospatial Science</b> <span>&middot; January to May &middot; final project on nuclear siting in Utah</span></p>
         <div class="track-bar c-utah" data-start="2026-01" data-end="2026-05" style="grid-column: 1 / 6"></div>
-        <p class="track-label"><b>PM2.5 prediction model research</b> <span>&middot; May to present &middot; Department of Statistics</span></p>
+        <p class="track-label"><b>Air pollution model research</b> <span>&middot; May to present &middot; Department of Statistics</span></p>
         <div class="track-bar c-pm open" data-start="2026-05" style="grid-column: 5 / 11"></div>
-        <p class="track-label"><b>San Diego flooding analysis</b> <span>&middot; August to present &middot; NR 450 Geospatial Project Design and Analysis</span></p>
+        <p class="track-label"><b>San Diego rainfall flooding</b> <span>&middot; August to present &middot; NR 450 Geospatial Project Design and Analysis</span></p>
         <div class="track-bar c-sd open" data-start="2026-08" style="grid-column: 8 / 11"></div>
       </div>
       <div class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -447,91 +469,108 @@ dialog::backdrop { background: var(--scrim); }
   <section class="band" id="san-diego">
     <div class="wrap">
       <header class="plate-head">
-        <p class="mono"><span class="swatch c-sd"></span>August 2026 to present &middot; NR 450 course project &middot; Ongoing</p>
-        <h2>Atmospheric flooding analysis of San Diego</h2>
-        <p class="deck">San Diego experienced heavy atmospheric flooding in 2024. My partner and I are testing how well terrain explains where the water went, and what the city could do next for future events.</p>
+        <p class="mono"><span class="swatch c-sd"></span>August 2026 to present &middot; NR 450 course project with Alexis Rhodes &middot; In progress</p>
+        <h2>San Diego rainfall flooding</h2>
+        <p class="deck">In January 2024 an intense storm flooded San Diego neighborhoods that FEMA maps rate as low risk. We built a model that predicts where that flooding happened far better than the FEMA zones do.</p>
       </header>
 
       <div class="plate-body">
         <div class="prose">
-          <p>My project partner and I used Google Earth Engine to pull CHIRPS precipitation, Sentinel-1 radar (SAR) imagery and JRC surface water data, and to analyze precipitation from the atmospheric floods of 2024. We are beginning the terrain analysis with a Topographic Wetness Index (TWI) and plan to add a Height Above Nearest Drainage (HAND) analysis, then compare both against the floods themselves.</p>
-          <p>The severity of the flooding was underreported, so we also compiled a heat map of Get It Done calls, the city&rsquo;s non-emergency reports, to show where residents were asking for help.</p>
-          <p>From there we will evaluate the mitigation and adaptation techniques used in Norfolk, Virginia, as a case study for what can be proposed in San Diego to prevent flooding that exceeds sea level rise.</p>
+          <p>My partner Alexis Rhodes and I built a seven-factor flood susceptibility model: Height Above Nearest Drainage (HAND), a rainfall-weighted Topographic Wetness Index (TWI), soils, land cover, and distances to the coast, lakes and roads. We weighted the factors with the Analytic Hierarchy Process (AHP), working in R (terra, gstat, WhiteboxTools) and ArcGIS Pro. HAND turned out to be the strongest single factor.</p>
+          <p>We validated the model against the city&rsquo;s 311 flood reports. It ranked flooded locations well (AUC 0.71), while FEMA flood zones barely beat chance (AUC 0.54). Its highest-risk class covers 2.6% of the city but held 18% of the reports.</p>
+          <p>We then flagged high-risk areas outside FEMA zones and found that major roads near military installations cross them at more than twice the expected rate. A case study of Norfolk, Virginia, identified rainfall flooding measures San Diego could adopt.</p>
+          <p>We are now publishing the results as an ArcGIS Online web map and a StoryMap, with FGDC metadata for every layer. An early draft of the StoryMap is online while we finish it.</p>
+          <p class="pub-links"><a href="https://arcg.is/0e5D4v1" target="_blank" rel="noopener">View the StoryMap draft</a></p>
         </div>
         <dl class="notes">
-          <div><dt>Context</dt><dd>NR 450 Geospatial Project Design and Analysis, Colorado State University. Students work in pairs on a project of their choice: planning, acquiring and preparing data, spatial analysis and visual outputs.</dd></div>
-          <div><dt>Tools</dt><dd>ArcGIS Pro, Google Earth Engine, R</dd></div>
-          <div><dt>Data</dt><dd><ul class="defs"><li><b>CHIRPS</b> Climate Hazards Center InfraRed Precipitation with Station data</li><li><b>Sentinel-1 SAR</b> Synthetic Aperture Radar imagery</li><li><b>JRC</b> Joint Research Centre Global Surface Water</li><li><b>NOAA</b> Precipitation totals</li><li><b>Get It Done</b> City of San Diego non-emergency reports</li></ul></dd></div>
-          <div><dt>Methods</dt><dd>TWI, HAND (planned), heat map</dd></div>
+          <div><dt>Context</dt><dd>NR 450 Geospatial Project Design and Analysis, Colorado State University, with Alexis Rhodes</dd></div>
+          <div><dt>Tools</dt><dd>R (terra, gstat, WhiteboxTools), ArcGIS Pro, ArcGIS Online, StoryMaps, Python (arcpy)</dd></div>
+          <div><dt>Methods</dt><dd>AHP weighting, kriging, HAND, TWI, ROC/AUC validation</dd></div>
+          <div><dt>Data</dt><dd><ul class="defs"><li><b>Get It Done</b> City of San Diego 311 flood reports, used for validation</li><li><b>NOAA</b> Precipitation totals</li><li><b>FEMA</b> Flood zones, used for comparison</li><li><b>Sentinel-1 SAR and JRC surface water</b> Explored, not used in the final model</li></ul></dd></div>
+          <div><dt>Metadata</dt><dd>FGDC metadata for every layer</dd></div>
         </dl>
       </div>
 
       <div class="figs">
+        <dl class="results" aria-label="Validation results">
+          <div><dt>Model AUC</dt><dd>0.71</dd><p>Ranks flooded locations well</p></div>
+          <div><dt>FEMA zones AUC</dt><dd>0.54</dd><p>Barely better than chance (0.50)</p></div>
+          <div><dt>Highest-risk class</dt><dd>2.6% <span>of area</span></dd><p>Held 18% of the 311 flood reports</p></div>
+        </dl>
+
         <div class="pair">
-          <figure>
-            <button class="shot" type="button" data-group="San Diego" data-full="sd-twi.jpg" data-caption="Topographic Wetness Index, San Diego, California. Low values mark steep terrain; high values mark floodplains.">
-              <span class="neatline" style="display:block"><img src="t-sd-twi.jpg" alt="Topographic Wetness Index map of San Diego, from low values on steep terrain to high values on floodplains" width="560" height="725" loading="lazy"></span>
-            </button>
-            <figcaption class="lead-cap">Topographic Wetness Index. Low values mark steep terrain; high values mark floodplains.</figcaption>
-          </figure>
           <figure>
             <button class="shot" type="button" data-group="San Diego" data-full="sd-getitdone.jpg" data-caption="January 22, 2024: NOAA precipitation totals, Get It Done flooding and drainage calls, and flood inundation areas.">
               <span class="neatline" style="display:block"><img src="t-sd-getitdone.jpg" alt="Map of San Diego with a heat map of Get It Done flooding and drainage calls, precipitation totals as graduated circles, and flood inundation areas" width="560" height="725" loading="lazy"></span>
             </button>
             <figcaption class="lead-cap">January 22, 2024. Get It Done flooding and drainage calls against NOAA precipitation totals and flood inundation areas.</figcaption>
           </figure>
+          <figure>
+            <button class="shot" type="button" data-group="San Diego" data-full="sd-twi.jpg" data-caption="Early step: Topographic Wetness Index, San Diego. Low values mark steep terrain; high values mark floodplains. TWI became one of the seven factors in the final model.">
+              <span class="neatline" style="display:block"><img src="t-sd-twi.jpg" alt="Topographic Wetness Index map of San Diego, from low values on steep terrain to high values on floodplains" width="560" height="725" loading="lazy"></span>
+            </button>
+            <figcaption class="lead-cap">Early step: Topographic Wetness Index, later one of the seven model factors.</figcaption>
+          </figure>
         </div>
 
         <div class="progress">
-          <p class="mono">Progress, October 2026</p>
-          <p>Precipitation, SAR and surface water data are pulled, and the Get It Done heat map and first TWI map are drafted. The HAND analysis, the comparison against observed flooding and the Norfolk case study come next.</p>
+          <p class="mono">Status, November 2026</p>
+          <p>The seven-factor AHP model is built and validated against 311 flood reports. A first draft of the StoryMap is published; the full StoryMap and the ArcGIS Online web map are in progress.</p>
         </div>
 
         <div class="block">
           <h3>Project workflow</h3>
           <ol class="steps">
-            <li><h3>Data acquisition</h3><p>Identify vector and raster sources, pull datasets through Google Earth Engine and collect Get It Done non-emergency calls.</p></li>
+            <li><h3>Data acquisition</h3><p>Identify vector and raster sources, pull datasets through Google Earth Engine and collect Get It Done 311 flood reports.</p></li>
             <li><h3>Verification and cleaning</h3><p>Reproject layers, check for missing data, reclassify rasters, clip to the city boundary and geocode the Get It Done data.</p></li>
-            <li><h3>Elevation and congestion maps</h3><p>Derive slope and aspect from digital elevation models, and map traffic congestion density around the entry and exit points of the main bases.</p></li>
-            <li><h3>Major flood event modeling</h3><p>Find the top precipitation events in CHIRPS, extract post-storm surface water from Sentinel-1 SAR, mask permanent water with the JRC baseline and compare against FEMA and First Street flood hazard layers.</p></li>
-            <li><h3>Hydrological modeling</h3><p>Run TWI and HAND from the elevation models, calculate flow accumulation, and validate modeled susceptibility against the SAR observations.</p></li>
-            <li><h3>Spatial analysis</h3><p>Overlay flood extent on roads and critical infrastructure, then measure flooded area, impacted road miles and affected population.</p></li>
-            <li><h3>Adaptation and mitigation strategies</h3><p>Assess sites by slope, soil permeability and land use, and prioritize where interventions would matter most.</p></li>
-            <li><h3>Interactive visualization</h3><p>Build web maps with layer toggles and legend controls, exported as standalone pages.</p></li>
-            <li><h3>Research paper</h3><p>Compile static maps, method figures and summary tables into a reproducible manuscript.</p></li>
+            <li><h3>Elevation and road maps</h3><p>Derive slope and aspect from digital elevation models, and map the major roads leading to military installations.</p></li>
+            <li><h3>Flood event exploration</h3><p>Explore Sentinel-1 SAR and JRC surface water data for the storm. These were explored but not used in the final model.</p></li>
+            <li><h3>Susceptibility model</h3><p>Build seven factors, including HAND and a rainfall-weighted TWI, and weight them with the Analytic Hierarchy Process.</p></li>
+            <li><h3>Validation</h3><p>Test the model and FEMA flood zones against 311 flood reports with ROC curves and AUC.</p></li>
+            <li><h3>Vulnerability analysis</h3><p>Flag high-risk areas outside FEMA zones and measure how often major roads near military installations cross them.</p></li>
+            <li><h3>Norfolk case study</h3><p>Identify rainfall flooding measures from Norfolk, Virginia, that San Diego could adopt.</p></li>
+            <li><h3>Publication</h3><p>Publish an ArcGIS Online web map and a StoryMap, with FGDC metadata for every layer. In progress; <a href="https://arcg.is/0e5D4v1" target="_blank" rel="noopener">StoryMap draft</a>.</p></li>
           </ol>
         </div>
       </div>
     </div>
   </section>
+
   <!-- ============ Project 2 ============ -->
   <section class="band" id="pm25">
     <div class="wrap">
       <header class="plate-head">
         <p class="mono"><span class="swatch c-pm"></span>May 2026 to present &middot; Undergraduate research &middot; Ongoing</p>
-        <h2>Comprehensive review of PM2.5 prediction models</h2>
-        <p class="deck">Several research groups publish national maps of fine particulate pollution. I mapped where they disagree.</p>
+        <h2>Comparing air pollution exposure models</h2>
+        <p class="deck">Several research groups publish national maps of air pollution. I mapped where they disagree, then tested them against EPA monitors in cities and in the countryside.</p>
       </header>
 
       <div class="plate-body">
         <div class="prose">
           <p>PM2.5 is fine inhalable particulate matter, 2.5 micrometers and smaller, and it poses a risk for a wide range of health issues. Health and policy research depends on models that predict its concentration everywhere, including the places between ground monitors.</p>
           <p>Working with Associate Professor Kayleigh Keller, I compared the available datasets: ACAG, GHAP and its U.S. counterpart USHAP, SEDAC, and CACES. They arrive as a mix of raster and vector data on different grids. I built a master grid, matched each model to its coordinate reference system and projection, and resampled with bilinear interpolation so the models could be differenced cell by cell. All of the work is in R.</p>
-          <h3>Key findings</h3>
+          <h3>Summer 2026: where the models disagree</h3>
           <ul>
             <li>No two independent datasets are aligned.</li>
             <li>GHAP predicts significantly higher concentrations than the others.</li>
             <li>ACAG&rsquo;s regional model is a crop of its global model, and the two are identical.</li>
             <li>The western United States is the most uncertain region.</li>
           </ul>
-          <h3>Where it is going</h3>
-          <p>This began as a paid summer position, and I was asked to continue with the professor into the fall. We have since evaluated the models against EPA sensors and extended the comparison to NO<sub>2</sub> and O<sub>3</sub>. I am now working toward a comprehensive review of all exposome models, with an urban and rural comparison.</p>
+          <h3>Fall 2026: urban and rural performance</h3>
+          <p>This began as a paid summer position, and I was asked to continue into the fall. I checked the models against EPA monitors for PM2.5, nitrogen dioxide (NO<sub>2</sub>) and ozone (O<sub>3</sub>), then sorted each monitor as urban or rural using 2020 Census urban areas to ask whether the models work equally well in both.</p>
+          <ul>
+            <li>They do not, and the gap depends on the pollutant. All three NO<sub>2</sub> models overestimate rural monitors by 35% to 97%, compared with &minus;4% to +14% at urban monitors.</li>
+            <li>Ozone shows the opposite pattern. The coarsest model (CAMS, 80 km cells) overestimates urban monitors more, because it cannot capture how city emissions remove ozone locally.</li>
+            <li>PM2.5 errors are modest in both settings. USHAP matched the monitors best (R&sup2; 0.91 to 0.97).</li>
+            <li>The models disagree with each other more at urban monitors for every pollutant.</li>
+          </ul>
         </div>
         <dl class="notes">
           <div><dt>Role</dt><dd>Undergraduate researcher, Department of Statistics, Colorado State University</dd></div>
           <div><dt>Advisor</dt><dd>Kayleigh Keller, Associate Professor</dd></div>
-          <div><dt>Tools</dt><dd>R</dd></div>
-          <div><dt>Datasets</dt><dd><ul class="defs"><li><b>ACAG</b> Atmospheric Composition Analysis Group</li><li><b>GHAP</b> Global High-resolution and High-quality Air Pollutants</li><li><b>USHAP</b> U.S. High Air Pollutants, the regional GHAP product</li><li><b>SEDAC</b> NASA Socioeconomic Data and Applications Center</li><li><b>CACES</b> Center for Air, Climate and Energy Solutions</li></ul></dd></div>
+          <div><dt>Tools</dt><dd>R (sf, terra, tigris)</dd></div>
+          <div><dt>Methods</dt><dd>R&sup2;, normalized RMSE and bias, Wilcoxon rank-sum test</dd></div>
+          <div><dt>Datasets</dt><dd><ul class="defs"><li><b>EPA AQS</b> Air Quality System monitors, used as ground truth</li><li><b>ACAG</b> Atmospheric Composition Analysis Group</li><li><b>GHAP</b> Global High-resolution and High-quality Air Pollutants</li><li><b>USHAP</b> U.S. High Air Pollutants, the regional GHAP product</li><li><b>SEDAC</b> NASA Socioeconomic Data and Applications Center</li><li><b>CACES</b> Center for Air, Climate and Energy Solutions</li><li><b>Anenberg</b> NO<sub>2</sub> model</li><li><b>CAMS</b> Copernicus Atmosphere Monitoring Service ozone</li></ul></dd></div>
           <div><dt>Resolution</dt><dd>1 km grids (CACES varies)</dd></div>
           <div><dt>Reference level</dt><dd>NAAQS annual PM2.5 limit: 9 &micro;g/m&sup3;</dd></div>
         </dl>
@@ -539,10 +578,17 @@ dialog::backdrop { background: var(--scrim); }
 
       <div class="figs">
         <figure class="pm-lead">
+          <button class="shot" type="button" data-group="PM2.5" data-full="pm-monitors.jpg" data-caption="EPA monitors for NO2, ozone and PM2.5, classified as urban or rural using 2020 Census urban areas.">
+            <span class="neatline" style="display:block"><img src="pm-monitors.jpg" alt="Three maps of EPA monitors for NO2, ozone and PM2.5, colored urban or rural" width="1300" height="924" loading="lazy"></span>
+          </button>
+          <figcaption class="lead-cap">Fall 2026: EPA monitors for each pollutant, classified as urban or rural with 2020 Census urban areas.</figcaption>
+        </figure>
+
+        <figure class="pm-lead">
           <button class="shot" type="button" data-group="PM2.5" data-full="pm-disagreement.jpg" data-caption="Four-model disagreement for 2017, as the standard deviation across models in µg/m³. Darker reds mark higher disagreement.">
             <span class="neatline" style="display:block"><img src="pm-disagreement.jpg" alt="Map of the contiguous United States showing the standard deviation among four PM2.5 models in 2017; disagreement is highest across the West" width="1296" height="776" loading="lazy"></span>
           </button>
-          <figcaption class="lead-cap">Four-model disagreement for 2017, as the standard deviation across models. The darkest reds sit in the mountain West.</figcaption>
+          <figcaption class="lead-cap">Summer 2026: four-model disagreement for 2017, as the standard deviation across models. The darkest reds sit in the mountain West.</figcaption>
         </figure>
 
         <div class="block">
@@ -704,7 +750,7 @@ dialog::backdrop { background: var(--scrim); }
 <footer>
   <div class="wrap">
     <p class="mono">Tani Lambert &middot; Colorado State University</p>
-    <p class="mono">Updated October 2026</p>
+    <p class="mono">Updated November 2026</p>
   </div>
 </footer>
 
@@ -776,6 +822,7 @@ dialog::backdrop { background: var(--scrim); }
   });
 })();
 </script>
+
 <script>
 /* Timeline that extends itself: one column per month from January 2026 to the current month.
    To end a bar, add data-end="YYYY-MM" to it (for example data-end="2026-12"). */
